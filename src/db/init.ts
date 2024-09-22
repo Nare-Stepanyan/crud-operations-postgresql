@@ -2,8 +2,10 @@ import fs from "fs-extra";
 import path from "path";
 import { adminPool, pool } from "./database";
 
-const dbTableSqlPath = path.join(__dirname, "./createTable.sql");
+const dbTableSqlPath = path.join(__dirname, "./../migration/createTable.sql");
+const insertDataSqlPath = path.join(__dirname, "./../migration/insertData.sql");
 const createTablesSQL = fs.readFileSync(dbTableSqlPath, "utf8");
+const insertDataSQL = fs.readFileSync(insertDataSqlPath, "utf8");
 
 const createDatabaseAndTables = async () => {
   let db;
@@ -27,6 +29,9 @@ const createDatabaseAndTables = async () => {
     db = await pool.connect();
     await db.query(createTablesSQL);
     console.log("Tables created.");
+
+    await db.query(insertDataSQL);
+    console.log("Data inserted into tables.");
   } catch (err) {
     console.error("Error during database creation:", err);
   } finally {
