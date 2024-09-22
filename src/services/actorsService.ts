@@ -16,7 +16,7 @@ export class ActorService {
   }
 
   static async getActorById(actorId: number): Promise<IActor | null> {
-    const result = await pool.query("SELECT * FROM actors WHERE actorId = $1", [
+    const result = await pool.query("SELECT * FROM actors WHERE id = $1", [
       actorId,
     ]);
     return result.rows[0] || null;
@@ -25,12 +25,12 @@ export class ActorService {
   static async updateActor(actorId: number, actor: IActor): Promise<void> {
     const { name, nationality, dateOfBirth } = actor;
     await pool.query(
-      "UPDATE actors SET name = $1, nationality = $2, dateOfBirth = $3 WHERE actorId = $4",
+      "UPDATE actors SET name = $1, nationality = $2, dateOfBirth = $3 WHERE id = $4",
       [name, nationality, dateOfBirth, actorId]
     );
   }
 
   static async deleteActor(actorId: number): Promise<void> {
-    await pool.query("DELETE FROM actors WHERE actorId = $1", [actorId]);
+    await pool.query("DELETE FROM actors WHERE id = $1", [actorId]);
   }
 }
