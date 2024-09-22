@@ -25,8 +25,9 @@ CREATE TABLE IF NOT EXISTS movies (
 );
 
 CREATE TABLE IF NOT EXISTS ratings (
-    movieId INT REFERENCES movies(movieId),
-    rating DECIMAL CHECK (rating >= 0 AND rating <= 10)
+    movieId INT PRIMARY KEY, 
+    rating DECIMAL CHECK (rating >= 0 AND rating <= 10),
+    CONSTRAINT fk_movie FOREIGN KEY (movieId) REFERENCES movies(movieId) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS movieGenres (
