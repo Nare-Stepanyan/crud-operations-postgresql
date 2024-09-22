@@ -4,8 +4,10 @@ import { adminPool, pool } from "./database";
 
 const dbTableSqlPath = path.join(__dirname, "./../migration/createTable.sql");
 const insertDataSqlPath = path.join(__dirname, "./../migration/insertData.sql");
+const dropTableSqlPath = path.join(__dirname, "./../migration/dropTables.sql");
 const createTablesSQL = fs.readFileSync(dbTableSqlPath, "utf8");
 const insertDataSQL = fs.readFileSync(insertDataSqlPath, "utf8");
+const dropTablesSQL = fs.readFileSync(dropTableSqlPath, "utf8");
 
 const createDatabaseAndTables = async () => {
   let db;
@@ -27,6 +29,10 @@ const createDatabaseAndTables = async () => {
     adminClient.release();
 
     db = await pool.connect();
+
+    await db.query(dropTablesSQL);
+    console.log("Tables dropped.");
+
     await db.query(createTablesSQL);
     console.log("Tables created.");
 
@@ -41,4 +47,4 @@ const createDatabaseAndTables = async () => {
   }
 };
 
-export default createDatabaseAndTables;
+createDatabaseAndTables();
