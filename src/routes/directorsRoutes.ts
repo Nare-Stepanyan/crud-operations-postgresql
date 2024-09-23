@@ -6,8 +6,11 @@ import {
   getDirectors,
   updateDirector,
 } from "../controllers/directorsController";
+import { checkDirectorExists } from "../middlewares/actors/checkDirector.middleware";
 
 const router = Router();
+
+router.param("id", checkDirectorExists);
 
 router.route("/").get(getDirectors).post(createDirector);
 

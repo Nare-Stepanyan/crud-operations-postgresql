@@ -1,27 +1,27 @@
 import { Response, NextFunction } from "express";
 import { catchAsync } from "../../helpers/catchAsync";
-import { ActorService } from "../../services/actorsService";
 import { ERROR_MESSAGES } from "../../constants.ts/errorMessages";
 import { STATUS_CODES } from "../../constants.ts/statusCodes";
 import { ICustomRequest } from "../../types.ts/custom";
+import { DirectorService } from "../../services/directorsService";
 
-export const checkActorExists = catchAsync(
+export const checkDirectorExists = catchAsync(
   async (
     req: ICustomRequest,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
-    const actorId = parseInt(req.params.id, 10);
-    const actor = await ActorService.getActorById(actorId);
+    const directorId = parseInt(req.params.id, 10);
+    const director = await DirectorService.getDirectorById(directorId);
 
-    if (!actor) {
+    if (!director) {
       res
         .status(STATUS_CODES.NOT_FOUND)
-        .json({ error: ERROR_MESSAGES.ACTOR_NOT_FOUND });
+        .json({ error: ERROR_MESSAGES.DIRECTOR_NOT_FOUND });
       return;
     }
 
-    req.actor = actor;
+    req.director = director;
     next();
   }
 );

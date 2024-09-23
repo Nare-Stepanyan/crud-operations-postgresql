@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { DirectorService } from "../services/directorsService";
 import { catchAsync } from "../helpers/catchAsync";
+import { ICustomRequest } from "../types.ts/custom";
+import { STATUS_CODES } from "../constants.ts/statusCodes";
 
 export const createDirector = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -10,12 +12,12 @@ export const createDirector = catchAsync(
       nationality,
       dateOfBirth,
     });
-    res.status(201).json(newDirector);
+    res.status(STATUS_CODES.CREATED).json(newDirector);
   }
 );
 
 export const updateDirector = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: ICustomRequest, res: Response): Promise<void> => {
     const directorId = parseInt(req.params.id, 10);
     const { name, nationality, dateOfBirth } = req.body;
     const updatedDirector = await DirectorService.updateDirector(directorId, {
@@ -28,14 +30,8 @@ export const updateDirector = catchAsync(
 );
 
 export const getDirector = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
-    const directorId = parseInt(req.params.id, 10);
-    const director = await DirectorService.getDirectorById(directorId);
-    if (director) {
-      res.json(director);
-    } else {
-      res.status(404).json({ error: "Director not found" });
-    }
+  async (req: ICustomRequest, res: Response): Promise<void> => {
+    res.json(req.director);
   }
 );
 
@@ -47,8 +43,9 @@ export const getDirectors = catchAsync(
 );
 
 export const deleteDirector = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: ICustomRequest, res: Response): Promise<void> => {
     const directorId = parseInt(req.params.id, 10);
     await DirectorService.deleteDirector(directorId);
+    res.status(STATUS_CODES.NO_CONTENT).send();
   }
 );
