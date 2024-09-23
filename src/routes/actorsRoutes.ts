@@ -10,12 +10,10 @@ import { checkActorExists } from "../middlewares/actors/checkActor.middleware";
 
 const router = Router();
 
+router.param("id", checkActorExists);
+
 router.route("/").get(getActors).post(createActor);
 
-router
-  .route("/:id")
-  .get(checkActorExists, getActor)
-  .patch(updateActor)
-  .delete(deleteActor);
+router.route("/:id").get(getActor).patch(updateActor).delete(deleteActor);
 
 export default router;
