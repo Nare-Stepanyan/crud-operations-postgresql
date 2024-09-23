@@ -1,19 +1,26 @@
 import { Request, Response } from "express";
 import { RatingService } from "../services/ratingService";
 import { catchAsync } from "../helpers/catchAsync";
+import { STATUS_CODES } from "../constants.ts/statusCodes";
+import { ERROR_MESSAGES } from "../constants.ts/errorMessages";
+import { SUCCESS_MESSAGES } from "../constants.ts/successMessages";
 
 export const getRatingByMovieId = catchAsync(
   async (req: Request, res: Response) => {
     const movieId = parseInt(req.params.movieId, 10);
     if (isNaN(movieId)) {
-      return res.status(400).json({ error: "Invalid movie ID" });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ error: ERROR_MESSAGES.INVALID_ID });
     }
 
     const rating = await RatingService.getRatingByMovieId(movieId);
     if (rating) {
       res.json(rating);
     } else {
-      res.status(404).json({ error: "Rating not found" });
+      res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ error: ERROR_MESSAGES.RATING_NOT_FOUND });
     }
   }
 );
@@ -21,11 +28,15 @@ export const getRatingByMovieId = catchAsync(
 export const createRating = catchAsync(async (req: Request, res: Response) => {
   const { movieId, rating } = req.body;
   if (!movieId || !rating) {
-    return res.status(400).json({ error: "Movie ID and rating are required" });
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json({ error: ERROR_MESSAGES.REQUIRED_ID_RATING });
   }
 
   await RatingService.createRating({ movieId, rating });
-  res.status(201).json({ message: "Rating created successfully" });
+  res
+    .status(STATUS_CODES.CREATED)
+    .json({ message: SUCCESS_MESSAGES.RATING_CREATED });
 });
 
 export const updateRating = catchAsync(async (req: Request, res: Response) => {
@@ -33,19 +44,23 @@ export const updateRating = catchAsync(async (req: Request, res: Response) => {
   const { rating } = req.body;
 
   if (isNaN(movieId) || rating === undefined) {
-    return res.status(400).json({ error: "Invalid movie ID or rating" });
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json({ error: ERROR_MESSAGES.INVALID_ID_RATING });
   }
 
   await RatingService.updateRating(movieId, rating);
-  res.json({ message: "Rating updated successfully" });
+  res.json({ message: SUCCESS_MESSAGES.RATING_UPDATED });
 });
 
 export const deleteRating = catchAsync(async (req: Request, res: Response) => {
   const movieId = parseInt(req.params.movieId, 10);
   if (isNaN(movieId)) {
-    return res.status(400).json({ error: "Invalid movie ID" });
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json({ error: ERROR_MESSAGES.INVALID_ID });
   }
 
   await RatingService.deleteRating(movieId);
-  res.status(204).send();
+  res.status(STATUS_CODES.NO_CONTENT).send();
 });
