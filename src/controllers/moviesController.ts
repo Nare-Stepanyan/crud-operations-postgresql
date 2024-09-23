@@ -1,23 +1,16 @@
 import { Request, Response } from "express";
 import { MovieService } from "../services/moviesService";
+import { catchAsync } from "../helpers/catchAsync";
 
-export const getAllMovies = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const getAllMovies = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const movies = await MovieService.getMovies();
     res.json(movies);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve movies" });
   }
-};
+);
 
-export const getMovieById = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const getMovieById = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const movieId = parseInt(req.params.id, 10);
     const movie = await MovieService.getMovieById(movieId);
     if (movie) {
@@ -25,16 +18,11 @@ export const getMovieById = async (
     } else {
       res.status(404).json({ error: "Movie not found" });
     }
-  } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve movie" });
   }
-};
+);
 
-export const createMovie = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const createMovie = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { title, releaseYear, directorId } = req.body;
     const newMovie = await MovieService.createMovie({
       title,
@@ -42,16 +30,11 @@ export const createMovie = async (
       directorId,
     });
     res.status(201).json(newMovie);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create movie" });
   }
-};
+);
 
-export const updateMovie = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const updateMovie = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const movieId = parseInt(req.params.id, 10);
     const { title, releaseYear, directorId } = req.body;
     const updatedMovie = await MovieService.updateMovie(movieId, {
@@ -60,20 +43,13 @@ export const updateMovie = async (
       directorId,
     });
     res.json(updatedMovie);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update movie" });
   }
-};
+);
 
-export const deleteMovie = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const deleteMovie = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const movieId = parseInt(req.params.id, 10);
     await MovieService.deleteMovie(movieId);
     res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete movie" });
   }
-};
+);

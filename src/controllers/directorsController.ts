@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { DirectorService } from "../services/directorsService";
+import { catchAsync } from "../helpers/catchAsync";
 
-export const createDirector = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const createDirector = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { name, nationality, dateOfBirth } = req.body;
     const newDirector = await DirectorService.createDirector({
       name,
@@ -13,16 +11,11 @@ export const createDirector = async (
       dateOfBirth,
     });
     res.status(201).json(newDirector);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create director" });
   }
-};
+);
 
-export const updateDirector = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const updateDirector = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const directorId = parseInt(req.params.id, 10);
     const { name, nationality, dateOfBirth } = req.body;
     const updatedDirector = await DirectorService.updateDirector(directorId, {
@@ -31,16 +24,11 @@ export const updateDirector = async (
       dateOfBirth,
     });
     res.json(updatedDirector);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update director" });
   }
-};
+);
 
-export const getDirector = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const getDirector = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const directorId = parseInt(req.params.id, 10);
     const director = await DirectorService.getDirectorById(directorId);
     if (director) {
@@ -48,32 +36,19 @@ export const getDirector = async (
     } else {
       res.status(404).json({ error: "Director not found" });
     }
-  } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve director" });
   }
-};
+);
 
-export const getDirectors = async (
-  _req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const getDirectors = catchAsync(
+  async (_req: Request, res: Response): Promise<void> => {
     const directors = await DirectorService.getDirectors();
     res.json(directors);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve directors" });
   }
-};
+);
 
-export const deleteDirector = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const deleteDirector = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const directorId = parseInt(req.params.id, 10);
     await DirectorService.deleteDirector(directorId);
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete director" });
   }
-};
+);

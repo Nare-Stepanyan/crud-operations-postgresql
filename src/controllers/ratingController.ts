@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { RatingService } from "../services/ratingService";
+import { catchAsync } from "../helpers/catchAsync";
 
-export const getRatingByMovieId = async (req: Request, res: Response) => {
-  try {
+export const getRatingByMovieId = catchAsync(
+  async (req: Request, res: Response) => {
     const movieId = parseInt(req.params.movieId, 10);
     if (isNaN(movieId)) {
       return res.status(400).json({ error: "Invalid movie ID" });
@@ -14,57 +15,37 @@ export const getRatingByMovieId = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ error: "Rating not found" });
     }
-  } catch (error) {
-    console.error("Error fetching rating:", error);
-    res.status(500).json({ error: "Failed to retrieve rating" });
   }
-};
+);
 
-export const createRating = async (req: Request, res: Response) => {
-  try {
-    const { movieId, rating } = req.body;
-    if (!movieId || !rating) {
-      return res
-        .status(400)
-        .json({ error: "Movie ID and rating are required" });
-    }
-
-    await RatingService.createRating({ movieId, rating });
-    res.status(201).json({ message: "Rating created successfully" });
-  } catch (error) {
-    console.error("Error creating rating:", error);
-    res.status(500).json({ error: "Failed to create rating" });
+export const createRating = catchAsync(async (req: Request, res: Response) => {
+  const { movieId, rating } = req.body;
+  if (!movieId || !rating) {
+    return res.status(400).json({ error: "Movie ID and rating are required" });
   }
-};
 
-export const updateRating = async (req: Request, res: Response) => {
-  try {
-    const movieId = parseInt(req.params.movieId, 10);
-    const { rating } = req.body;
+  await RatingService.createRating({ movieId, rating });
+  res.status(201).json({ message: "Rating created successfully" });
+});
 
-    if (isNaN(movieId) || rating === undefined) {
-      return res.status(400).json({ error: "Invalid movie ID or rating" });
-    }
+export const updateRating = catchAsync(async (req: Request, res: Response) => {
+  const movieId = parseInt(req.params.movieId, 10);
+  const { rating } = req.body;
 
-    await RatingService.updateRating(movieId, rating);
-    res.json({ message: "Rating updated successfully" });
-  } catch (error) {
-    console.error("Error updating rating:", error);
-    res.status(500).json({ error: "Failed to update rating" });
+  if (isNaN(movieId) || rating === undefined) {
+    return res.status(400).json({ error: "Invalid movie ID or rating" });
   }
-};
 
-export const deleteRating = async (req: Request, res: Response) => {
-  try {
-    const movieId = parseInt(req.params.movieId, 10);
-    if (isNaN(movieId)) {
-      return res.status(400).json({ error: "Invalid movie ID" });
-    }
+  await RatingService.updateRating(movieId, rating);
+  res.json({ message: "Rating updated successfully" });
+});
 
-    await RatingService.deleteRating(movieId);
-    res.status(204).send();
-  } catch (error) {
-    console.error("Error deleting rating:", error);
-    res.status(500).json({ error: "Failed to delete rating" });
+export const deleteRating = catchAsync(async (req: Request, res: Response) => {
+  const movieId = parseInt(req.params.movieId, 10);
+  if (isNaN(movieId)) {
+    return res.status(400).json({ error: "Invalid movie ID" });
   }
-};
+
+  await RatingService.deleteRating(movieId);
+  res.status(204).send();
+});

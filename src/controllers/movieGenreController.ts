@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { MovieGenresService } from "../services/movieGenreService";
+import { catchAsync } from "../helpers/catchAsync";
 
-export const addMovieGenre = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const addMovieGenre = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { movieId, genreId } = req.body;
 
     if (!movieId || !genreId) {
@@ -14,17 +12,11 @@ export const addMovieGenre = async (
 
     await MovieGenresService.addMovieGenre(movieId, genreId);
     res.status(201).json({ message: "Movie and Genre linked successfully" });
-  } catch (error) {
-    console.error("Error adding movie to genre:", error);
-    res.status(500).json({ error: "Failed to link movie and genre" });
   }
-};
+);
 
-export const removeMovieGenre = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const removeMovieGenre = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { movieId, genreId } = req.params;
 
     await MovieGenresService.removeMovieGenre(
@@ -32,8 +24,5 @@ export const removeMovieGenre = async (
       parseInt(genreId, 10)
     );
     res.status(204).send();
-  } catch (error) {
-    console.error("Error removing movie from genre:", error);
-    res.status(500).json({ error: "Failed to unlink movie and genre" });
   }
-};
+);

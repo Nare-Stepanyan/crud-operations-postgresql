@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { ActorService } from "../services/actorsService";
+import { catchAsync } from "../helpers/catchAsync";
 
-export const createActor = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const createActor = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const { name, nationality, dateOfBirth } = req.body;
     const newActor = await ActorService.createActor({
       name,
@@ -13,16 +11,11 @@ export const createActor = async (
       dateOfBirth,
     });
     res.status(201).json(newActor);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create actor" });
   }
-};
+);
 
-export const updateActor = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const updateActor = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const actorId = parseInt(req.params.id, 10);
     const { name, nationality, dateOfBirth } = req.body;
     const updatedActor = await ActorService.updateActor(actorId, {
@@ -31,13 +24,11 @@ export const updateActor = async (
       dateOfBirth,
     });
     res.json(updatedActor);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update actor" });
   }
-};
+);
 
-export const getActor = async (req: Request, res: Response): Promise<void> => {
-  try {
+export const getActor = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const actorId = parseInt(req.params.id, 10);
     const actor = await ActorService.getActorById(actorId);
     if (actor) {
@@ -45,32 +36,20 @@ export const getActor = async (req: Request, res: Response): Promise<void> => {
     } else {
       res.status(404).json({ error: "Actor not found" });
     }
-  } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve actor" });
   }
-};
+);
 
-export const getActors = async (
-  _req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const getActors = catchAsync(
+  async (_req: Request, res: Response): Promise<void> => {
     const actors = await ActorService.getActors();
     res.json(actors);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to retrieve actors" });
   }
-};
+);
 
-export const deleteActor = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
+export const deleteActor = catchAsync(
+  async (req: Request, res: Response): Promise<void> => {
     const actorId = parseInt(req.params.id, 10);
     await ActorService.deleteActor(actorId);
     res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete actor" });
   }
-};
+);
