@@ -6,7 +6,7 @@ import {
   getDirectors,
   updateDirector,
 } from "../controllers/directorsController";
-import { checkDirectorExists } from "../middlewares/actors/checkDirector.middleware";
+import { checkDirectorExists } from "../middlewares/directors/checkDirector.middleware";
 
 const router = Router();
 

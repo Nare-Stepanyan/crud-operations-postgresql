@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { GenreService } from "../services/genresService";
 import { catchAsync } from "../helpers/catchAsync";
+import { STATUS_CODES } from "../constants.ts/statusCodes";
+import { ICustomRequest } from "../types.ts/custom";
 
 export const createGenre = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -8,12 +10,12 @@ export const createGenre = catchAsync(
     const newGenre = await GenreService.createGenre({
       name,
     });
-    res.status(201).json(newGenre);
+    res.status(STATUS_CODES.CREATED).json(newGenre);
   }
 );
 
 export const updateGenre = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: ICustomRequest, res: Response): Promise<void> => {
     const genreId = parseInt(req.params.id, 10);
     const { name } = req.body;
     const updatedGenre = await GenreService.updateGenre(genreId, {
@@ -24,14 +26,8 @@ export const updateGenre = catchAsync(
 );
 
 export const getGenre = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
-    const genreId = parseInt(req.params.id, 10);
-    const genre = await GenreService.getGenreById(genreId);
-    if (genre) {
-      res.json(genre);
-    } else {
-      res.status(404).json({ error: "Genre not found" });
-    }
+  async (req: ICustomRequest, res: Response): Promise<void> => {
+    res.json(req.genre);
   }
 );
 
@@ -43,9 +39,9 @@ export const getGenres = catchAsync(
 );
 
 export const deleteGenre = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: ICustomRequest, res: Response): Promise<void> => {
     const genreId = parseInt(req.params.id, 10);
     await GenreService.deleteGenre(genreId);
-    res.status(204).send();
+    res.status(STATUS_CODES.NO_CONTENT).send();
   }
 );
