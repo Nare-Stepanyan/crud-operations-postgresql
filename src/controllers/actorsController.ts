@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { ActorService } from "../services/actorsService";
 import { catchAsync } from "../helpers/catchAsync";
+import { STATUS_CODES } from "../constants.ts/statusCodes";
+import { IGetActorRequest } from "../types.ts/custom";
 
 export const createActor = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -10,7 +12,7 @@ export const createActor = catchAsync(
       nationality,
       dateOfBirth,
     });
-    res.status(201).json(newActor);
+    res.status(STATUS_CODES.CREATED).json(newActor);
   }
 );
 
@@ -28,14 +30,8 @@ export const updateActor = catchAsync(
 );
 
 export const getActor = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
-    const actorId = parseInt(req.params.id, 10);
-    const actor = await ActorService.getActorById(actorId);
-    if (actor) {
-      res.json(actor);
-    } else {
-      res.status(404).json({ error: "Actor not found" });
-    }
+  async (req: IGetActorRequest, res: Response): Promise<void> => {
+    res.json(req.actor);
   }
 );
 
@@ -47,9 +43,9 @@ export const getActors = catchAsync(
 );
 
 export const deleteActor = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: IGetActorRequest, res: Response): Promise<void> => {
     const actorId = parseInt(req.params.id, 10);
     await ActorService.deleteActor(actorId);
-    res.status(204).send();
+    res.status(STATUS_CODES.NO_CONTENT).send();
   }
 );
